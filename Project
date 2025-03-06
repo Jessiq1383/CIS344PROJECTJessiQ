@@ -1,0 +1,151 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`table1`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`table1` (
+)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Department`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Department` (
+  `idDepartment` INT NOT NULL,
+  `DepartmentName` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idDepartment`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Student`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Student` (
+  `idStudent` INT NOT NULL,
+  `studentfirstname` VARCHAR(45) NOT NULL,
+  `studentlastname` VARCHAR(45) NOT NULL,
+  `studentMajor` VARCHAR(45) NOT NULL,
+  `studentContact` VARCHAR(45) NOT NULL,
+  `studentAddress` VARCHAR(45) NOT NULL,
+  `studentEmergencyContact` VARCHAR(45) NOT NULL,
+  `Department_idDepartment` INT NOT NULL,
+  PRIMARY KEY (`idStudent`),
+  INDEX `fk_Student_Department_idx` (`Department_idDepartment` ASC) ,
+  CONSTRAINT `fk_Student_Department`
+    FOREIGN KEY (`Department_idDepartment`)
+    REFERENCES `mydb`.`Department` (`idDepartment`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Instructor`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Instructor` (
+  `idInstructor` INT NOT NULL,
+  `instructorfirstname` VARCHAR(45) NOT NULL,
+  `instructorLastName` VARCHAR(45) NOT NULL,
+  `instructorAddress` VARCHAR(45) NULL,
+  `instructorContactinfo` VARCHAR(45) NOT NULL,
+  `Department_idDepartment` INT NOT NULL,
+  PRIMARY KEY (`idInstructor`),
+  UNIQUE INDEX `idInstructor_UNIQUE` (`idInstructor` ASC) ,
+  INDEX `fk_Instructor_Department1_idx` (`Department_idDepartment` ASC) ,
+  UNIQUE INDEX `instructorContactinfo_UNIQUE` (`instructorContactinfo` ASC) ,
+  UNIQUE INDEX `Department_idDepartment_UNIQUE` (`Department_idDepartment` ASC) ,
+  CONSTRAINT `fk_Instructor_Department1`
+    FOREIGN KEY (`Department_idDepartment`)
+    REFERENCES `mydb`.`Department` (`idDepartment`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Course`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Course` (
+  `idCourse` INT NOT NULL,
+  `courseName` VARCHAR(45) NOT NULL,
+  `courseInfo` VARCHAR(45) NOT NULL,
+  `courseLevel` VARCHAR(45) NOT NULL,
+  `Student_idStudent` INT NOT NULL,
+  `` VARCHAR(45) NULL,
+  PRIMARY KEY (`idCourse`),
+  UNIQUE INDEX `idCourse_UNIQUE` (`idCourse` ASC) ,
+  UNIQUE INDEX `courseName_UNIQUE` (`courseName` ASC) ,
+  INDEX `fk_Course_Student1_idx` (`Student_idStudent` ASC) ,
+  CONSTRAINT `fk_Course_Student1`
+    FOREIGN KEY (`Student_idStudent`)
+    REFERENCES `mydb`.`Student` (`idStudent`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Class`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Class` (
+  `idClass` INT NOT NULL,
+  `classSchedule` VARCHAR(45) NOT NULL,
+  `classRoomNumber` VARCHAR(45) NOT NULL,
+  `Course_idCourse` INT NOT NULL,
+  `Instructor_idInstructor` INT NOT NULL,
+  `maxStudent` INT NULL,
+  PRIMARY KEY (`idClass`, `Course_idCourse`),
+  UNIQUE INDEX `idClass_UNIQUE` (`idClass` ASC) ,
+  INDEX `fk_Class_Course1_idx` (`Course_idCourse` ASC) ,
+  INDEX `fk_Class_Instructor1_idx` (`Instructor_idInstructor` ASC) ,
+  CONSTRAINT `fk_Class_Course1`
+    FOREIGN KEY (`Course_idCourse`)
+    REFERENCES `mydb`.`Course` (`idCourse`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Class_Instructor1`
+    FOREIGN KEY (`Instructor_idInstructor`)
+    REFERENCES `mydb`.`Instructor` (`idInstructor`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Tuition`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Tuition` (
+  `idOrder` INT NOT NULL,
+  `tuitionAmountfee` VARCHAR(45) NOT NULL,
+  `pay_method` DECIMAL(10) NOT NULL,
+  `pay_date` DATE NOT NULL,
+  `Student_idStudent` INT NOT NULL,
+  PRIMARY KEY (`idOrder`),
+  UNIQUE INDEX `idOrder_UNIQUE` (`idOrder` ASC) ,
+  INDEX `fk_Tuition_Student1_idx` (`Student_idStudent` ASC) ,
+  CONSTRAINT `fk_Tuition_Student1`
+    FOREIGN KEY (`Student_idStudent`)
+    REFERENCES `mydb`.`Student` (`idStudent`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
